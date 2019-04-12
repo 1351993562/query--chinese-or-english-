@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+
+			.header {
+				width: 300px;
+				position: relative;
+				background-color: gray;
+				margin: 0 auto;
+				margin-top: 16px;
+				height: 48px;
+			}
+
+			.input input {
+				width: 292px;
+				height: 48px;
+				/* background-color: green; */
+				border: 1px solid gray;
+				padding-left: 8px;
+			}
+
+			.content {
+				/* background-color: red; */
+				width: 100%;
+				border: 1px solid gray;
+				margin-top: 8px;
+				padding-bottom: 16px;
+			}
+
+			.content .item {
+				height: 26px;
+				line-height: 26px;
+				padding-left: 8px;
+				/* background-color: green */
+			}
+
+			.content-item-span {
+				display: none;
+			}
+			
+			.hasContent{
+				padding-left: 8px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="header">
+			<div class="input">
+				<input type="text" id="query" value="" placeholder="支持简拼/全拼/汉子">
+				</input>
+			</div>
+			<div style="clear: both;"></div>
+
+			<div class="content">
+				<div class="item">
+					中横泾北口泵闸<span class="content-item-span">zhjbkbz</span>
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<script type="text/javascript" charset="utf-8">
+		var benZha = [{
+				"id": 1,
+				"name": "中横泾北口泵闸",
+				"pingyin": "zhjbkbz"
+			},
+			{
+				"id": 2,
+				"name": "火星水闸",
+				"pingyin": "hxsz"
+			},
+			{
+				"id": 3,
+				"name": "顾巷水闸",
+				"pingyin": "gxsz"
+			}
+		];
+
+		//组装列表数据
+		initHtml(benZha);
+
+		//监听输入内容变化
+		$("input").bind("input propertychange", function(event) {
+			var value = $(this).val();
+			console.log("输入的内容是：" + value);
+			if (value) {
+				var arr = [];
+				var hasValue = false;
+				/**
+				 * 1 找到数组中拥有输入内容的元素的下标
+				 * 2 遍历列表元素，根据下标来显示与隐藏对应的元素
+				 */
+				for (var i in benZha) {
+					var str = benZha[i].name + benZha[i].pingyin;
+					var intFlat = str.indexOf(value);
+					if (intFlat != -1) {
+						arr.push(1);
+						hasValue = true;
+					} else {
+						arr.push(0);
+					}
+				}
+				console.log(arr);
+				if (hasValue) {
+					//列表中没有的元素隐藏起来
+					$(".item").each(function() {
+						var index = $(this).index();
+						var j = arr[index];
+						if (j == 0) {
+							//隐藏
+							$(this).hide();
+						} else {
+							//显示
+							$(this).show();
+						}
+					})
+				}else{
+					//没有任何元素搜索到,那么提示"暂无记录"
+					$(".content").html('<span class="hasContent">暂无记录</span>');
+				}
+			} else {
+				initHtml(benZha);
+				return;
+			}
+		});
+
+		//监听下拉列表条目点击监听事件
+		$(".item").click(function() {
+			var value = $(this).text();
+			console.log("您选择的内容：" + value);
+
+		})
+
+		function initHtml(arr) {
+			var contentHtml = "";
+			for (var i in arr) {
+				var json = arr[i];
+				contentHtml += '<div class="item">';
+				contentHtml += json.name + '<span class="content-item-span">' + json.pingyin + "</span>";
+				contentHtml += '</div>';
+			}
+			$(".content").html(contentHtml);
+		}
+	</script>
+</html>
